@@ -38,6 +38,7 @@ public class BookListActivity extends AppCompatActivity {
     private BookAdapter bookAdapter;
     private BookClient client;
     private ArrayList<Book> abooks;
+    MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class BookListActivity extends AppCompatActivity {
     // Executes an API call to the OpenLibrary search endpoint, parses the results
     // Converts them into an array of book objects and adds them to the adapter
     private void fetchBooks(String query) {
+        this.miActionProgressItem.setVisible(true);
         client = new BookClient();
         client.getBooks(query, new JsonHttpResponseHandler() {
 
@@ -106,10 +108,12 @@ public class BookListActivity extends AppCompatActivity {
                             abooks.add(book); // add book through the adapter
                         }
                         bookAdapter.notifyDataSetChanged();
+                        miActionProgressItem.setVisible(false);
                     }
                 } catch (JSONException e) {
                     // Invalid JSON format, show appropriate error.
                     e.printStackTrace();
+                    miActionProgressItem.setVisible(false);
                 }
             }
 
@@ -127,6 +131,10 @@ public class BookListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_book_list, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        // Progress bar
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
