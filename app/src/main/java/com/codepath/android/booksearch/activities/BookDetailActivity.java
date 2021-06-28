@@ -2,10 +2,14 @@ package com.codepath.android.booksearch.activities;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.codepath.android.booksearch.GlideApp;
@@ -24,6 +28,7 @@ public class BookDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
+
         // Fetch views
         ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -31,6 +36,17 @@ public class BookDetailActivity extends AppCompatActivity {
 
         // Extract book object from intent extras
         this.book = (Book) Parcels.unwrap(getIntent().getParcelableExtra(Book.class.getSimpleName()));
+        try {
+            // Find the toolbar view inside the activity layout
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            // Sets the Toolbar to act as the ActionBar for this Activity window.
+            // Make sure the toolbar exists in the activity and is not null
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle(this.book.getTitle());
+        } catch (NullPointerException e) {
+            Log.e("BookDetailActivity", "Exception when setting title on ActionBar", e);
+        }
+
 
         // Use book object to populate data into views
         tvTitle.setText(this.book.getTitle());
@@ -45,7 +61,10 @@ public class BookDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_book_detail, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_book_detail, menu);
+
+        // getMenuInflater().inflate(R.menu.menu_book_detail, menu);
         return true;
     }
 
